@@ -5,7 +5,7 @@ import time
 import matplotlib.pyplot as plt
 import os
 
-def visualOdometry(Left_Images,Right_Images,Current_poseMatrix):
+def visualOdometry(Left_Images,Right_Images,Current_poseMatrix,test):
     """
     Calculates the average processing time and error of a 51 frame KITTI test sample
 
@@ -25,13 +25,13 @@ def visualOdometry(Left_Images,Right_Images,Current_poseMatrix):
     global P_l, K_l, P_r, K_r 
     
     # KITTI Dataset Calibration
-    '''
-    P_l = np.array([[718.856, 0., 607.1928, 0.],[ 0., 718.856, 185.2157, 0.],[0., 0., 1., 0.]])
-    K_l = P_l[0:3, 0:3]
+    if (test == 1) or (test ==2):
+        P_l = np.array([[718.856, 0., 607.1928, 0.],[ 0., 718.856, 185.2157, 0.],[0., 0., 1., 0.]])
+        K_l = P_l[0:3, 0:3]
+        
+        P_r = np.array([[718.856, 0., 607.1928, -386.1448],[ 0., 718.856, 185.2157, 0.],[0., 0., 1., 0.]])
+        K_r = P_r[0:3, 0:3]
     
-    P_r = np.array([[718.856, 0., 607.1928, -386.1448],[ 0., 718.856, 185.2157, 0.],[0., 0., 1., 0.]])
-    K_r = P_r[0:3, 0:3]
-    '''
     # Real Time Code Calibration - Low Cost Camera
     '''
     P_l = np.array([[193.10259135106102, 0.0, 180.88180313102188, 0.0],[0.0, 193.60656458116262, 138.921210372036, 0.0],[0.0, 0.0, 1.0, 0.0]])
@@ -48,12 +48,12 @@ def visualOdometry(Left_Images,Right_Images,Current_poseMatrix):
     K_r = P_r[0:3, 0:3]
     '''
     # Real Time Code Calibration - Zed2 Camera
-    
-    P_l = np.array([[513.0909576327231, 0.0, 638.4887540503237, 0.0],[0.0, 516.4312524995516, 385.0964516155614, 0.0],[0.0, 0.0, 1.0, 0.0]])
-    K_l = P_l[0:3, 0:3]
+    if test==3:
+        P_l = np.array([[513.0909576327231, 0.0, 638.4887540503237, 0.0],[0.0, 516.4312524995516, 385.0964516155614, 0.0],[0.0, 0.0, 1.0, 0.0]])
+        K_l = P_l[0:3, 0:3]
 
-    P_r = np.array([[511.7983742817586, -8.689457794397656, 634.1373710175565, -2625.6463685768294],[-0.4090062051800656, 507.55207120877066, 374.12970612424056, -24.763317290172175],[0.00019204794305597482, -0.014455605593522164, 0.9998954938314865, -0.05696334883402989]])
-    K_r = P_r[0:3, 0:3] 
+        P_r = np.array([[511.7983742817586, -8.689457794397656, 634.1373710175565, -2625.6463685768294],[-0.4090062051800656, 507.55207120877066, 374.12970612424056, -24.763317290172175],[0.00019204794305597482, -0.014455605593522164, 0.9998954938314865, -0.05696334883402989]])
+        K_r = P_r[0:3, 0:3] 
     
     global images_l, images_r
 
@@ -397,7 +397,7 @@ def projectOutput(test = 3, directory = 'KITTI_sequence_2'):
 
         current_poseMatrix = np.array([[1., 0., 0., 0.],[0., 1., 0., 0.],[ 0.,  0.,  1., 0.],[0., 0., 0., 1.]])
 
-        pose_Matrix, position, ellapsed = visualOdometry(images_l,images_r,current_poseMatrix)
+        pose_Matrix, position, ellapsed = visualOdometry(images_l,images_r,current_poseMatrix,1)
 
         print('Positional Matrix:')
         print(pose_Matrix)
@@ -450,7 +450,7 @@ def projectOutput(test = 3, directory = 'KITTI_sequence_2'):
                 img_r_array.append(img_r[i])
 
                 # VO call to get new transformation, position,, and time.
-                pose_Matrix, position, ellapsed = visualOdometry(img_l_array,img_r_array,current_poseMatrix)
+                pose_Matrix, position, ellapsed = visualOdometry(img_l_array,img_r_array,current_poseMatrix,2)
                 
                 # Updating the new transformation to the current position
                 current_poseMatrix = pose_Matrix
@@ -531,7 +531,7 @@ def projectOutput(test = 3, directory = 'KITTI_sequence_2'):
                 img_r_array.append(left_right_image[1])
 
                 # VO call to get new transformation, position,, and time.
-                pose_Matrix, position, ellapsed = visualOdometry(img_l_array,img_r_array,current_poseMatrix)
+                pose_Matrix, position, ellapsed = visualOdometry(img_l_array,img_r_array,current_poseMatrix,3)
                 
                 # Updating the new transformation to the current position
                 current_poseMatrix = pose_Matrix
@@ -565,3 +565,19 @@ def projectOutput(test = 3, directory = 'KITTI_sequence_2'):
         plt.show()
         
 projectOutput()
+"""
+projectOutput() instructions
+
+Purpose
+----------
+Project output test and real time operation
+
+Parameters
+----------
+test (int): 1 - Two image test; 2 - Image test with live plot; 3 - Real-time test (Default: test = 3)
+directory (string): Put in relative path to KITTI_sequence_2 directory (Default: directory = 'KITTI_sequence_2')'
+
+Returns
+-------
+None
+"""
